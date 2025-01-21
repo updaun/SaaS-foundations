@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # my-apps
     "commando",
+    "profiles",
     "visits",
     # third-party-apps
     "allauth_ui",
