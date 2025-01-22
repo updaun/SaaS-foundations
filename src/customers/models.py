@@ -1,3 +1,4 @@
+import helpers.billing
 from django.conf import settings
 from django.db import models
 
@@ -11,3 +12,14 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def save(self, *args, **kwargs):
+        if not self.stripe_id:
+            email = self.user.email
+            if email != "" or email is not None:
+                stripe_id = helpers.billing.create_customer(
+                    raw=False,
+                    email=email,
+                )
+                self.stripe_id = stripe_id
+        super().save(*args, **kwargs)
