@@ -79,7 +79,7 @@ class SubscriptionPrice(models.Model):
         """
         remove decimal places
         """
-        return self.price * 100
+        return int(self.price * 100)
 
     @property
     def product_stripe_id(self):
@@ -91,7 +91,7 @@ class SubscriptionPrice(models.Model):
         if self.stripe_id is None and self.product_stripe_id is not None:
             stripe_id = helpers.billing.create_price(
                 currency=self.stripe_currency,
-                product_id=self.product_stripe_id,
+                product=self.product_stripe_id,
                 unit_amount=self.stripe_price,
                 interval=self.interval,
                 metadata={
