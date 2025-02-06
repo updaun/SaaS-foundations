@@ -161,7 +161,9 @@ class UserSubscription(models.Model):
     subscription = models.ForeignKey(
         Subscription, on_delete=models.SET_NULL, null=True, blank=True
     )
+    stripe_id = models.CharField(max_length=120, blank=True, null=True)
     active = models.BooleanField(default=True)
+    user_cancelled = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user} - {self.subscription}"
