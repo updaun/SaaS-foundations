@@ -164,6 +164,31 @@ class UserSubscription(models.Model):
     stripe_id = models.CharField(max_length=120, blank=True, null=True)
     active = models.BooleanField(default=True)
     user_cancelled = models.BooleanField(default=False)
+    original_period_start = models.DateTimeField(
+        auto_now=False, auto_now_add=False, blank=True, null=True
+    )
+    current_period_start = models.DateTimeField(
+        auto_now=False, auto_now_add=False, blank=True, null=True
+    )
+    current_period_end = models.DateTimeField(
+        auto_now=False, auto_now_add=False, blank=True, null=True
+    )
+
+    @property
+    def billing_cycle_anchor(self):
+        """
+        https://docs.stripe.com/payments/checkout/billing-cycle
+        Optional delay to start new subscription in
+        Stripe checkout
+        """
+        if not self.current_period_end:
+            return None
+        return int(self.current_period_end.timestamp())
+
+    def save(self, *args, **kwargs):
+        if self.original_period_start is None and self.current_period_start is not None:
+            self.original_period_start = self.current_period_start
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user} - {self.subscription}"
